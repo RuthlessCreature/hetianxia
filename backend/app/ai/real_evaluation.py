@@ -13,6 +13,8 @@ from app.ai.real_training import ImageDataset
 
 
 def evaluate_model(model_path: str, test_images_dir: str) -> dict:
+    if not HAS_TORCH:
+        return _default_eval("PyTorch not installed")
     if not os.path.exists(model_path):
         return _default_eval("model file not found")
 

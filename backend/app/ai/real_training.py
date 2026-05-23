@@ -16,22 +16,25 @@ except ImportError:
 from app.core.config import settings
 
 
-class ImageDataset(Dataset):
-    def __init__(self, image_paths: list[str], labels: list[int], transform=None):
-        self.paths = image_paths
-        self.labels = labels
-        self.transform = transform or transforms.Compose([
-            transforms.Resize((224, 224)),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ])
+if HAS_TORCH:
+    class ImageDataset(Dataset):
+        def __init__(self, image_paths: list[str], labels: list[int], transform=None):
+            self.paths = image_paths
+            self.labels = labels
+            self.transform = transform or transforms.Compose([
+                transforms.Resize((224, 224)),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ])
 
-    def __len__(self):
-        return len(self.paths)
+        def __len__(self):
+            return len(self.paths)
 
-    def __getitem__(self, idx):
-        img = Image.open(self.paths[idx]).convert("RGB")
-        return self.transform(img), self.labels[idx]
+        def __getitem__(self, idx):
+            img = Image.open(self.paths[idx]).convert("RGB")
+            return self.transform(img), self.labels[idx]
+else:
+    ImageDataset = None
 
 
 def train_classifier(

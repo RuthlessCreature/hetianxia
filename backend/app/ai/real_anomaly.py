@@ -17,6 +17,11 @@ def _extract_deep_features(image_path: str) -> np.ndarray:
     Extract features from pretrained ResNet-18 (without final FC layer).
     Returns 512-dimensional feature vector.
     """
+    if not HAS_TORCH:
+        img = Image.open(image_path).convert("L")
+        arr = np.array(img).astype(float)
+        return np.array([arr.mean(), arr.std(), (arr > 128).mean() * 255, float(np.abs(np.diff(arr, axis=0)).mean()), float(np.abs(np.diff(arr, axis=1)).mean())])
+
     model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
     model.fc = torch.nn.Identity()
     model.eval()
