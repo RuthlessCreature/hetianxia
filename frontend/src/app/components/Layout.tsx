@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
+import APP_NAME from '../appName';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -23,7 +24,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {sidebarOpen && (
         <aside className="sidebar bg-gray-900 text-white flex flex-col">
           <div className="p-4 border-b border-gray-700">
-            <h1 className="text-lg font-bold">高纳AI</h1>
+            <h1 className="text-lg font-bold">{APP_NAME}</h1>
             <p className="text-xs text-gray-400">工业视觉平台</p>
           </div>
           <nav className="flex-1 py-4">

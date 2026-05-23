@@ -12,7 +12,7 @@ export default function TrainingPage() {
   const [selectedDataset, setSelectedDataset] = useState('');
   const [taskType, setTaskType] = useState('object_detection');
   const [strategy, setStrategy] = useState('transfer_learning');
-  const [trainingModel, setTrainingModel] = useState('resnet18');
+  const [trainingModel, setTrainingModel] = useState('randomforest');
   const [submitting, setSubmitting] = useState(false);
 
   const fetchData = () => {
@@ -126,10 +126,7 @@ export default function TrainingPage() {
               onChange={(e) => setTrainingModel(e.target.value)}
               className="w-full border rounded px-3 py-2"
             >
-              <option value="resnet18">ResNet-18 (快)</option>
-              <option value="resnet34">ResNet-34</option>
-              <option value="resnet50">ResNet-50 (准)</option>
-              <option value="efficientnet_b0">EfficientNet-B0</option>
+              <option value="randomforest">Random Forest (CPU)</option>
             </select>
           </div>
         </div>

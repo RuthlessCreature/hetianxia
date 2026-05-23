@@ -10,7 +10,7 @@ from app.routers import audit, deployment, notification, export_router, user_man
 
 init_db()
 
-app = FastAPI(title="高纳AI - 工业视觉平台", version="0.1.0")
+app = FastAPI(title=f"{settings.APP_NAME} - 工业视觉平台", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -47,3 +47,8 @@ app.include_router(user_management.router)
 @app.get("/api/health")
 def health_check():
     return {"status": "ok", "version": "0.1.0"}
+
+
+@app.get("/api/config")
+def app_config():
+    return {"app_name": settings.APP_NAME}

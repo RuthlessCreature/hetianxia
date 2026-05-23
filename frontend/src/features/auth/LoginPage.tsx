@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { authApi } from '../../api/auth';
+import APP_NAME from '../../app/appName';
 import type { LoginData } from '../../types';
 
 export default function LoginPage() {
@@ -48,7 +49,7 @@ export default function LoginPage() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-zinc-800 to-transparent rounded-full -translate-x-16 translate-y-16 opacity-20" />
 
         <div className="relative z-10">
-          <div className="text-zinc-500 text-xs tracking-[0.3em] uppercase mb-8">高纳AI · 工业视觉平台</div>
+          <div className="text-zinc-500 text-xs tracking-[0.3em] uppercase mb-8">{APP_NAME} · 工业视觉平台</div>
           <h1 className="text-5xl font-light leading-tight mb-6 tracking-tight">
             把产线质检<br />
             <span className="font-normal">变成一件简单的事</span>

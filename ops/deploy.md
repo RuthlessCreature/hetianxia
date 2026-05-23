@@ -1,60 +1,65 @@
-# 高纳AI 部署SOP
+# 可为科技 部署指南
 
-> 适用于 Linux VPS（阿里云/腾讯云/华为云/UCloud 等）
+> Alibaba Linux 3，从零到上线
 
 ---
 
-## 1. 服务器准备
+## 0. 安全组开端口
+
+阿里云控制台 → 安全组 → 入方向规则：
+
+| 端口 | 用途 |
+|---|---|
+| 80 | 前端页面 |
+| 22 | SSH |
+
+---
+
+## 1. 装 Docker
 
 ```bash
 ssh root@你的IP
 
-# 装 Docker
-curl -fsSL https://get.docker.com | bash
+# Alibaba Linux 3
+dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+dnf install -y docker-ce docker-compose-plugin
 
-# 启动 Docker
-systemctl enable docker && systemctl start docker
+# 国内镜像加速（必须）
+cat > /etc/docker/daemon.json << 'EOF'
+{
+  "registry-mirrors": [
+    "https://docker.1panel.live",
+    "https://hub.rat.dev"
+  ]
+}
+EOF
+
+systemctl daemon-reload
+systemctl enable --now docker
 docker --version
 ```
 
-## 2. 上传项目
+## 2. 拉代码
 
 ```bash
-# 方式A：本地打包上传
-# （在你电脑上）
-tar -czf gaona.tar.gz \
-  --exclude=node_modules \
-  --exclude=__pycache__ \
-  --exclude=.git \
-  --exclude=storage \
-  --exclude='*.db' \
-  .
-scp gaona.tar.gz root@你的IP:/opt/
-
-# （回到服务器上）
-cd /opt && tar -xzf gaona.tar.gz -C /opt/gaona
-cd /opt/gaona
+cd /root
+git clone https://github.com/RuthlessCreature/hetianxia.git
+cd hetianxia
 ```
 
 ## 3. 配置
 
 ```bash
-cd /opt/gaona
-
-# 生成密钥
-SECRET_KEY=$(openssl rand -hex 32)
-
-# 写 .env
 cat > .env << EOF
+APP_NAME=可为科技
 DATABASE_URL=sqlite:///./data/hetianxia.db
-SECRET_KEY=$SECRET_KEY
+SECRET_KEY=$(openssl rand -hex 32)
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
 UPLOAD_DIR=./data/uploads
 THUMBNAIL_DIR=./data/thumbnails
 EOF
 
-# 创建数据目录
 mkdir -p data/uploads data/thumbnails data/models
 ```
 
@@ -62,89 +67,32 @@ mkdir -p data/uploads data/thumbnails data/models
 
 ```bash
 docker compose up -d --build
-```
-
-等3-5分钟（第一次构建需要拉镜像+编译前端）。
-
-```bash
-# 看日志确认启动
-docker compose logs -f
-
-# 看到这行就OK了：
-# Application startup complete.
-```
-
-## 5. 初始化数据
-
-```bash
 docker compose exec backend python seed.py
 ```
 
-输出：
-```
-Seed data created: 5 users, 4 projects
-Demo accounts:
-  owner@demo.com / demo123 (owner)
-  admin@demo.com / demo123 (admin)
-  ...
-```
-
-## 6. 验证
+## 5. 验证
 
 ```
-浏览器打开: http://你的IP
-看到登录页 → 部署成功
-
+浏览器: http://你的公网IP
 API文档: http://你的IP:8000/docs
-健康检查: http://你的IP:8000/api/health
 ```
+
+---
+
+## 改名字
+
+`.env` 里改 `APP_NAME=你的名字`，重新 `docker compose up -d --build`。
 
 ---
 
 ## 运维
 
 ```bash
-# 查看状态
-docker compose ps
-
-# 重启
-docker compose restart
-
-# 停止
-docker compose down
-
-# 升级
-cd /opt/gaona
-git pull && docker compose up -d --build
+docker compose ps          # 状态
+docker compose logs -f     # 日志
+docker compose restart     # 重启
+docker compose down        # 停
 
 # 备份
 tar -czf backup_$(date +%Y%m%d).tar.gz data/
-
-# 定时备份（crontab -e）
-0 3 * * * tar -czf /opt/backups/gaona_$(date +\%Y\%m\%d).tar.gz /opt/gaona/data/
-```
-
----
-
-## Docker Compose 一键脚本
-
-存为 `/opt/gaona/setup.sh`:
-
-```bash
-#!/bin/bash
-cd /opt/gaona
-SECRET_KEY=$(openssl rand -hex 32)
-cat > .env << EOF
-DATABASE_URL=sqlite:///./data/hetianxia.db
-SECRET_KEY=$SECRET_KEY
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=1440
-UPLOAD_DIR=./data/uploads
-THUMBNAIL_DIR=./data/thumbnails
-EOF
-mkdir -p data/uploads data/thumbnails data/models
-docker compose up -d --build
-sleep 10
-docker compose exec backend python seed.py
-echo "Done. Visit http://$(curl -s ifconfig.me)"
 ```

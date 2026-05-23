@@ -1,12 +1,17 @@
 import os
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset
-from torchvision import models, transforms
-from PIL import Image
 import numpy as np
 import pickle
+from PIL import Image
+
+try:
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    from torch.utils.data import DataLoader, Dataset
+    from torchvision import models, transforms
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
 
 from app.core.config import settings
 
@@ -60,6 +65,48 @@ def train_classifier(
     if n_ng < 2 or n_ok < 2:
         labels = [i % 2 for i in range(len(images))]
         n_ok = n_ng = len(images) // 2
+
+    if not HAS_TORCH:
+        # Fallback: sklearn RandomForest (no torch needed)
+        from sklearn.ensemble import RandomForestClassifier
+        from sklearn.preprocessing import StandardScaler
+        from sklearn.model_selection import train_test_split
+        from sklearn.metrics import precision_score, recall_score, f1_score
+
+        features = []
+        for p in paths:
+            img = Image.open(p).convert("L")
+            arr = np.array(img).astype(float)
+            fv = [
+                arr.mean(), arr.std(),
+                float(np.abs(np.diff(arr, axis=0)).mean()),
+                float(np.abs(np.diff(arr, axis=1)).mean()),
+            ]
+            features.append(fv)
+        X = StandardScaler().fit_transform(np.array(features))
+        y = np.array(labels)
+        if min(sum(y), len(y) - sum(y)) >= 2:
+            X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)
+        else:
+            X_tr, X_te, y_tr, y_te = X, X, y, y
+        clf = RandomForestClassifier(n_estimators=50, max_depth=8, random_state=42)
+        clf.fit(X_tr, y_tr)
+        yp = clf.predict(X_te)
+        p = precision_score(y_te, yp, zero_division=0)
+        r = recall_score(y_te, yp, zero_division=0)
+        f = f1_score(y_te, yp, zero_division=0)
+        model_dir = os.path.join(os.path.dirname(upload_dir), "models")
+        os.makedirs(model_dir, exist_ok=True)
+        mp = os.path.join(model_dir, f"model_{project_id}.pkl")
+        with open(mp, "wb") as ff:
+            pickle.dump({"classifier": clf, "scaler": StandardScaler()}, ff)
+        return {
+            "status": "succeeded",
+            "metrics": {"precision": round(p, 3), "recall": round(r, 3), "f1": round(f, 3),
+                        "accuracy": round(float((yp == y_te).mean()), 3),
+                        "algorithm": "RandomForest (CPU, no PyTorch)", "n_samples": len(images)},
+            "artifact_path": mp,
+        }
 
     # Select backbone
     backbone_models = {
