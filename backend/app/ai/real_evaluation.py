@@ -1,8 +1,13 @@
 import os
-import torch
 import numpy as np
 from PIL import Image
-from torchvision import models, transforms
+
+try:
+    import torch
+    from torchvision import models, transforms
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
 
 from app.ai.real_training import ImageDataset
 

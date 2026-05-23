@@ -1,10 +1,15 @@
 import os
-import torch
 import numpy as np
 import pickle
 from PIL import Image
-from torchvision import models, transforms
 from sklearn.covariance import LedoitWolf
+
+try:
+    import torch
+    from torchvision import models, transforms
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
 
 
 def _extract_deep_features(image_path: str) -> np.ndarray:

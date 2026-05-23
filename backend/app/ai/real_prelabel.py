@@ -1,7 +1,12 @@
 import os
 import cv2
 import numpy as np
-import torch
+
+try:
+    import torch
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
 
 from app.core.config import settings
 
