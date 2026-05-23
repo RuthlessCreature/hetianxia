@@ -51,7 +51,7 @@ cd hetianxia
 
 ```bash
 cat > .env << EOF
-APP_NAME=可为科技
+APP_NAME=高纳AI
 DATABASE_URL=sqlite:///./data/hetianxia.db
 SECRET_KEY=$(openssl rand -hex 32)
 ALGORITHM=HS256

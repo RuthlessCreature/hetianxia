@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    APP_NAME: str = "可为科技"
+    APP_NAME: str = "高纳AI"
     DATABASE_URL: str = "sqlite:///./storage/hetianxia.db"
     SECRET_KEY: str = "change-me-to-a-random-secret-key"
     ALGORITHM: str = "HS256"
