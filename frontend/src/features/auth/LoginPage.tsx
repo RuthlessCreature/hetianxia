@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { authApi } from '../../api/auth';
-import APP_NAME from '../../app/appName';
+import { APP_NAME } from '../../app/appName';
 import type { LoginData } from '../../types';
 
 export default function LoginPage() {

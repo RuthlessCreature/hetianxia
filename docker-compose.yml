@@ -11,6 +11,8 @@ services:
       - .env
     environment:
       - APP_NAME=${APP_NAME:-高纳AI}
+      - COMPANY_NAME=${COMPANY_NAME:-高纳科技}
+      - THEME=${THEME:-light}
       - DATABASE_URL=sqlite:///./data/hetianxia.db
       - UPLOAD_DIR=./data/uploads
       - THUMBNAIL_DIR=./data/thumbnails
@@ -22,7 +24,9 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_APP_NAME=${APP_NAME:-可为科技}
+        - VITE_APP_NAME=${APP_NAME:-高纳AI}
+        - VITE_COMPANY_NAME=${COMPANY_NAME:-高纳科技}
+        - VITE_THEME=${THEME:-light}
     ports:
       - "80:80"
     depends_on:

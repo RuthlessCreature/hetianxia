@@ -118,5 +118,5 @@ class ExportService:
             for fc in report.failure_cases[:10]:
                 md += f"- **{fc.get('reason', 'Unknown')}** (image: {fc.get('image_id', '?')}, score: {fc.get('score', '?')})\n"
 
-        md += f"\n---\n*由和天下AOI平台自动生成*"
+        md += f"\n---\n*由高纳AI自动生成*"
         return md

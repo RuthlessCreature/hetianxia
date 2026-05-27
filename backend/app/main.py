@@ -6,7 +6,7 @@ from app.core.config import settings
 from app.core.rate_limit import rate_limit_middleware
 from app.db.database import init_db
 from app.routers import auth, tenant, project, image, annotation, dataset, prelabel, training, evaluation, model
-from app.routers import audit, deployment, notification, export_router, user_management
+from app.routers import audit, deployment, notification, export_router, user_management, sam
 
 init_db()
 
@@ -42,6 +42,7 @@ app.include_router(deployment.router)
 app.include_router(notification.router)
 app.include_router(export_router.router)
 app.include_router(user_management.router)
+app.include_router(sam.router)
 
 
 @app.get("/api/health")
@@ -51,4 +52,8 @@ def health_check():
 
 @app.get("/api/config")
 def app_config():
-    return {"app_name": settings.APP_NAME}
+    return {
+        "app_name": settings.APP_NAME,
+        "company_name": settings.COMPANY_NAME,
+        "theme": settings.THEME,
+    }

@@ -2,7 +2,11 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 ARG VITE_APP_NAME=高纳AI
+ARG VITE_COMPANY_NAME=高纳科技
+ARG VITE_THEME=light
 ENV VITE_APP_NAME=$VITE_APP_NAME
+ENV VITE_COMPANY_NAME=$VITE_COMPANY_NAME
+ENV VITE_THEME=$VITE_THEME
 COPY package.json package-lock.json ./
 RUN npm config set registry https://registry.npmmirror.com && npm install
 COPY . .

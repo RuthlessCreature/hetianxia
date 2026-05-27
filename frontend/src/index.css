@@ -2,10 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== Theme: Light ===== */
+:root, [data-theme="light"] {
+  --bg-main: #f3f4f6;
+  --bg-card: #ffffff;
+  --bg-sidebar: #18181b;
+  --text-primary: #18181b;
+  --text-secondary: #6b7280;
+  --text-sidebar: #d4d4d8;
+  --text-sidebar-muted: #71717a;
+  --border: #e5e7eb;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --header-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+}
+
+/* ===== Theme: Dark ===== */
+[data-theme="dark"] {
+  --bg-main: #09090b;
+  --bg-card: #18181b;
+  --bg-sidebar: #09090b;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-sidebar: #d4d4d8;
+  --text-sidebar-muted: #71717a;
+  --border: #27272a;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --header-bg: #18181b;
+  --input-bg: #27272a;
+  --input-border: #3f3f46;
+}
+
+/* ===== Theme: Industrial ===== */
+[data-theme="industrial"] {
+  --bg-main: #0a0f0d;
+  --bg-card: #111916;
+  --bg-sidebar: #060a08;
+  --text-primary: #e0f0e8;
+  --text-secondary: #6b9e80;
+  --text-sidebar: #b8d8c8;
+  --text-sidebar-muted: #4a7a5e;
+  --border: #1a2e22;
+  --accent: #2dd4bf;
+  --accent-hover: #14b8a6;
+  --danger: #f87171;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --header-bg: #111916;
+  --input-bg: #1a2a20;
+  --input-border: #2a4034;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #f3f4f6;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
 }
 
 .sidebar {
@@ -14,6 +76,22 @@ body {
 }
 
 .annotation-canvas {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   background: #fff;
+}
+
+/* Card overrides for theme-aware components */
+.bg-white { background-color: var(--bg-card) !important; }
+.bg-gray-100 { background-color: var(--bg-main) !important; }
+.bg-gray-50 { background-color: var(--bg-main) !important; }
+.shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+[data-theme="dark"] .shadow, [data-theme="industrial"] .shadow {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+header.bg-white { background-color: var(--header-bg) !important; }
+input, select, textarea {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
 }

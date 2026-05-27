@@ -30,7 +30,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-2">注册和天下</h1>
+        <h1 className="text-2xl font-bold text-center mb-2">注册高纳AI</h1>
         <p className="text-gray-500 text-center mb-6">创建您的AOI视觉AI平台账号</p>
         <form onSubmit={handleSubmit}>
           {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}

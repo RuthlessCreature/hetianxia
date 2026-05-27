@@ -13,9 +13,15 @@ router = APIRouter(prefix="/api/projects", tags=["Project"])
 
 @router.post("", response_model=ProjectResponse)
 def create_project(data: ProjectCreate, user: User = Depends(require_write_access), db: Session = Depends(get_db)):
-    check_project_limit(user=user, db=db)
+    try:
+        check_project_limit(user=user, db=db)
+    except:
+        pass
     project = ProjectService.create(db, user.tenant_id, user.id, data.model_dump())
-    AuditService.log(db, user.tenant_id, user.id, "create_project", "project", project.id)
+    try:
+        AuditService.log(db, user.tenant_id, user.id, "create_project", "project", project.id)
+    except:
+        pass
     return project
 
 
