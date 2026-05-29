@@ -9,7 +9,7 @@
 ### 入门
 - [[00-项目总览]] — 定位、技术栈、目录结构、快速启动
 - [[01-部署指南]] — Alibaba Linux 从零到上线 SOP
-- [[06-主题配置]] — 三套主题 + CSS 变量自定义
+- [[06-主题配置]] — 三套主题 + 三套布局 + CSS 变量自定义
 
 ### 功能
 - [[02-使用手册]] — 角色权限、三种检测路线、标注画布操作
@@ -28,10 +28,17 @@
 ## 配置速查
 
 ```env
-# .env — 改完 docker compose up -d --build 即生效
-APP_NAME=高纳AI          # 软件名
-COMPANY_NAME=高纳科技     # 公司名
-THEME=light              # light | dark | industrial
+# .env — 分发参数改完 docker compose up -d 即生效
+HTX_APP_NAME=高纳AI          # 软件名
+HTX_COMPANY_NAME=高纳科技     # 公司名
+HTX_PLATFORM_NAME=工业视觉平台 # 平台名/副标题
+HTX_THEME=light              # light | dark | industrial
+HTX_LAYOUT=sidebar           # sidebar | topbar | focus
+HTX_HOST_BIND=0.0.0.0        # 宿主机监听地址
+HTX_FRONTEND_PORT=80         # 前端端口
+HTX_BACKEND_PORT=8000        # 后端端口
+HTX_SAM_MODEL_SIZE=tiny      # tiny | small | base | large
+HTX_SAM_MODELS_DIR=./models  # 容器内 SAM2 模型目录
 ```
 
 ## 端口

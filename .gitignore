@@ -13,10 +13,12 @@ env/
 # Database
 *.db
 storage/
+backend/models/
 
 # Node
 node_modules/
 frontend/dist/
+*.tsbuildinfo
 
 # IDE
 .idea/

@@ -139,8 +139,8 @@ export default function AnnotationPage() {
   const cand = annotations.filter(a => a.status === 'candidate'), conf = annotations.filter(a => a.status === 'confirmed'), sel = annotations.find(a => a.id === selAnnId);
 
   return (
-    <div className="flex gap-3" style={{ height: 'calc(100vh - 100px)' }}>
-      <div className="w-44 bg-white rounded-lg shadow p-3 flex-shrink-0 flex flex-col gap-2 text-sm overflow-auto">
+    <div className="annotation-workbench flex gap-3" style={{ height: 'calc(100vh - 100px)' }}>
+      <div className="annotation-panel w-44 bg-white rounded-lg shadow p-3 flex-shrink-0 flex flex-col gap-2 text-sm overflow-auto">
         <Link to={`/projects/${projectId}/images`} className="text-blue-600 text-xs hover:underline">&larr; 返回</Link>
         <div>
           <div className="text-xs text-gray-500 mb-1">模式</div>
@@ -156,12 +156,12 @@ export default function AnnotationPage() {
           {labels.filter(l => l !== 'OK' && l !== 'NG').map((l, i) => (<div key={l} className="flex items-center group"><button onClick={() => setSelLabel(l)} className={`flex-1 text-left px-2 py-1 text-xs rounded mb-0.5 ${selLabel === l ? 'ring-2 ring-blue-500 font-medium' : 'hover:bg-gray-100'}`} style={{ backgroundColor: (CC[i % CC.length] || '#666') + '12', color: CC[i % CC.length] || '#666' }}>{l}</button>{!['scratch', 'dent', 'stain', 'crack', 'burr'].includes(l) && <button onClick={() => rmLabel(l)} className="text-gray-300 hover:text-red-400 text-xs px-1 opacity-0 group-hover:opacity-100">x</button>}</div>))}
           <div className="flex gap-0.5 mt-1"><input value={newLbl} onChange={e => setNewLbl(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') addLabel(); }} placeholder="新标签..." className="flex-1 border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-400" /><button onClick={addLabel} className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded">+</button></div></div>
       </div>
-      <div className="flex-1 bg-white rounded-lg shadow p-3 flex flex-col">
+      <div className="annotation-stage flex-1 bg-white rounded-lg shadow p-3 flex flex-col">
         <div className="flex justify-between items-center mb-1"><span className="text-sm text-gray-600 truncate">{image.file_name} {image.width}x{image.height} {annotations.length}标注</span><div className="flex items-center gap-1"><button onClick={() => prev && navigate(`/projects/${projectId}/images/${prev.id}/annotate`)} disabled={!prev} className="px-2 py-1 text-xs bg-gray-100 rounded disabled:opacity-30">&#9664;</button><span className="text-xs text-gray-400 px-1">{idx + 1}/{imgList.length}</span><button onClick={() => next && navigate(`/projects/${projectId}/images/${next.id}/annotate`)} disabled={!next} className="px-2 py-1 text-xs bg-gray-100 rounded disabled:opacity-30">&#9654;</button></div></div>
         {msg && <div className="mb-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded">{msg}</div>}
-        <div className="flex-1 overflow-auto border border-gray-300 rounded bg-gray-200"><canvas ref={elRef} /></div>
+        <div className="annotation-stage-canvas flex-1 overflow-auto border border-gray-300 rounded bg-gray-200"><canvas ref={elRef} /></div>
       </div>
-      <div className="w-52 bg-white rounded-lg shadow p-3 flex-shrink-0 overflow-auto text-sm flex flex-col gap-3">
+      <div className="annotation-panel w-52 bg-white rounded-lg shadow p-3 flex-shrink-0 overflow-auto text-sm flex flex-col gap-3">
         <h3 className="font-semibold text-sm">标注列表 ({annotations.length})</h3>
         {sel && sel.status === 'confirmed' && (<div className="bg-blue-50 border border-blue-200 rounded p-2 text-xs"><div className="font-medium mb-1">选中</div><div className="flex items-center gap-1 mb-1"><span className="text-gray-500">标签:</span><select value={sel.label || ''} onChange={e => chLabel(sel.id, e.target.value)} className="border border-gray-200 rounded px-1 py-0.5 text-xs flex-1">{labels.map(l => <option key={l} value={l}>{l}</option>)}</select></div><button onClick={() => { annotationApi.delete(sel.id).catch(() => {}); setAnnotations(x => x.filter(a => a.id !== sel.id)); setSelAnnId(null); }} className="text-red-500 hover:text-red-700 text-xs mt-1">删除</button></div>)}
         {cand.length > 0 && (<div><div className="text-xs font-medium text-yellow-600 mb-1">待审核 ({cand.length})</div>{cand.map(a => (<div key={a.id} className="bg-yellow-50 border border-yellow-200 p-1.5 rounded mb-1 text-xs"><div className="flex justify-between"><span className="font-medium">{a.label}</span><span className="text-gray-400">{a.confidence ? Math.round(a.confidence * 100) + '%' : ''}</span></div>{a.geometry && (a.geometry as any).w && <div className="text-gray-400">{(a.geometry as any).w}x{(a.geometry as any).h}</div>}<div className="flex gap-1 mt-1"><button onClick={() => review(a.id, 'confirmed')} className="bg-green-500 text-white px-1.5 py-0.5 rounded text-xs hover:bg-green-600">确认</button><button onClick={() => review(a.id, 'rejected')} className="bg-red-500 text-white px-1.5 py-0.5 rounded text-xs hover:bg-red-600">拒绝</button></div></div>))}</div>)}

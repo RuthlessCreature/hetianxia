@@ -3,7 +3,7 @@ SAM2 (Segment Anything Model 2) 集成模块
 支持自动下载模型、多模型切换、点击分割、框精细化。
 
 模型:
-  tiny   93MB  (默认)  → sam2_hiera_tiny.pt
+  tiny   149MB  (默认)  → sam2_hiera_tiny.pt
   small  184MB          → sam2_hiera_small.pt
   base   323MB          → sam2_hiera_base_plus.pt
   large  896MB          → sam2_hiera_large.pt
@@ -13,7 +13,7 @@ SAM2 (Segment Anything Model 2) 集成模块
   pip install segment-anything     (SAM1 回退)
 
 下载源:
-  https://dl.fbaipublicfiles.com/segment_anything_2/092824/
+  https://dl.fbaipublicfiles.com/segment_anything_2/072824/
 """
 
 import os
@@ -30,34 +30,34 @@ MODEL_REGISTRY = {
         "name": "SAM2 Hiera-Tiny",
         "config": "sam2_hiera_t.yaml",
         "checkpoint": "sam2_hiera_tiny.pt",
-        "url": "https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2_hiera_tiny.pt",
-        "size_mb": 93,
+        "url": "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_tiny.pt",
+        "size_mb": 149,
     },
     "small": {
         "name": "SAM2 Hiera-Small",
         "config": "sam2_hiera_s.yaml",
         "checkpoint": "sam2_hiera_small.pt",
-        "url": "https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2_hiera_small.pt",
+        "url": "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_small.pt",
         "size_mb": 184,
     },
     "base": {
         "name": "SAM2 Hiera-Base+",
         "config": "sam2_hiera_b+.yaml",
         "checkpoint": "sam2_hiera_base_plus.pt",
-        "url": "https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2_hiera_base_plus.pt",
+        "url": "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_base_plus.pt",
         "size_mb": 323,
     },
     "large": {
         "name": "SAM2 Hiera-Large",
         "config": "sam2_hiera_l.yaml",
         "checkpoint": "sam2_hiera_large.pt",
-        "url": "https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2_hiera_large.pt",
+        "url": "https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_large.pt",
         "size_mb": 896,
     },
 }
 
-DEFAULT_MODEL = os.getenv("SAM_MODEL_SIZE", "tiny")
-MODELS_DIR = os.getenv("SAM_MODELS_DIR", "./models")
+DEFAULT_MODEL = os.getenv("HTX_SAM_MODEL_SIZE", "tiny")
+MODELS_DIR = os.getenv("HTX_SAM_MODELS_DIR", "./models")
 
 # ====== 内部状态 ======
 _predictor = None

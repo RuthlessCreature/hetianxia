@@ -1,0 +1,36 @@
+summary: "Industrial AOI visual AI annotation, training, evaluation, and deployment platform with multi-tenant isolation and configurable distribution branding."
+status: "active"
+phase: "implementation"
+features:
+  - "Multi-tenant AOI project, image, annotation, dataset, training, evaluation, model, and deployment workflows"
+  - "Runtime-configurable product name, company name, platform name, theme, and layout for white-label distribution"
+  - "Runtime-configurable host binding and frontend/backend host ports"
+  - "HTX-prefixed startup parameters for distribution, deployment, storage, auth, and SAM model settings"
+  - "Three built-in UI themes: light, dark, industrial"
+  - "Three built-in UI layouts: sidebar, topbar, focus"
+  - "Mobile and tablet navigation/responsive fallbacks shared across themes"
+  - "Ubuntu helper script for downloading YOLOv8n and SAM2 checkpoints"
+requirements:
+  - "One codebase and one frontend image should support multiple company/platform distributions"
+  - "Distribution values should be accepted from startup environment variables"
+  - "Deployment host binding and host ports should be accepted from startup environment variables"
+  - "All public startup environment variables should use the HTX_ prefix"
+  - "Core backend behavior should remain shared across distributions"
+progress:
+  - "Added runtime config.js injection for frontend container startup"
+  - "Added HTX_PLATFORM_NAME and HTX_LAYOUT configuration across backend, frontend, Docker, and docs"
+  - "Added layout shell variants controlled by HTX_LAYOUT"
+  - "Added HTX_HOST_BIND, HTX_FRONTEND_PORT, and HTX_BACKEND_PORT Docker Compose startup parameters"
+  - "Added mobile bottom navigation and responsive shell/grid/table/annotation fallbacks"
+  - "Renamed public startup parameters to HTX_*"
+  - "Added scripts/download-ai-models.sh for Ubuntu model downloads"
+blockers: []
+next_actions:
+  - "Verify each HTX_THEME/HTX_LAYOUT combination visually in browser after production container build"
+  - "Verify phone and tablet breakpoints for the highest-traffic feature pages"
+  - "Decide whether customer distributions need locked theme selection or end-user theme override"
+links:
+  - "docs/vault/00-项目总览.md"
+  - "docs/vault/06-主题配置.md"
+  - "docs/vault/10-功能清单.md"
+last_reviewed: "2026-05-29"

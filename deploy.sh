@@ -11,8 +11,19 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+HTX_APP_NAME="${HTX_APP_NAME:-高纳AI}"
+HTX_COMPANY_NAME="${HTX_COMPANY_NAME:-高纳科技}"
+HTX_PLATFORM_NAME="${HTX_PLATFORM_NAME:-工业视觉平台}"
+HTX_THEME="${HTX_THEME:-light}"
+HTX_LAYOUT="${HTX_LAYOUT:-sidebar}"
+HTX_HOST_BIND="${HTX_HOST_BIND:-0.0.0.0}"
+HTX_FRONTEND_PORT="${HTX_FRONTEND_PORT:-80}"
+HTX_BACKEND_PORT="${HTX_BACKEND_PORT:-8000}"
+HTX_SAM_MODEL_SIZE="${HTX_SAM_MODEL_SIZE:-tiny}"
+HTX_SAM_MODELS_DIR="${HTX_SAM_MODELS_DIR:-./models}"
+
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  高纳AI - 工业视觉平台 部署脚本  ${NC}"
+echo -e "${GREEN}  ${HTX_APP_NAME} - ${HTX_PLATFORM_NAME} 部署脚本  ${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 
@@ -49,15 +60,25 @@ echo -e "${YELLOW}[3/7] 创建项目目录...${NC}"
 sudo mkdir -p /opt/hetianxia/data/uploads /opt/hetianxia/data/thumbnails
 sudo chmod -R 755 /opt/hetianxia/data
 
-# ---------- 4. 生成 SECRET_KEY ----------
+# ---------- 4. 生成 HTX_SECRET_KEY ----------
 echo -e "${YELLOW}[4/7] 生成安全密钥...${NC}"
-SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))" 2>/dev/null || openssl rand -hex 32)
-echo "DATABASE_URL=sqlite:///./data/hetianxia.db" > /opt/hetianxia/.env
-echo "SECRET_KEY=$SECRET_KEY" >> /opt/hetianxia/.env
-echo "ALGORITHM=HS256" >> /opt/hetianxia/.env
-echo "ACCESS_TOKEN_EXPIRE_MINUTES=1440" >> /opt/hetianxia/.env
-echo "UPLOAD_DIR=./data/uploads" >> /opt/hetianxia/.env
-echo "THUMBNAIL_DIR=./data/thumbnails" >> /opt/hetianxia/.env
+GENERATED_SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))" 2>/dev/null || openssl rand -hex 32)
+echo "HTX_APP_NAME=$HTX_APP_NAME" > /opt/hetianxia/.env
+echo "HTX_COMPANY_NAME=$HTX_COMPANY_NAME" >> /opt/hetianxia/.env
+echo "HTX_PLATFORM_NAME=$HTX_PLATFORM_NAME" >> /opt/hetianxia/.env
+echo "HTX_THEME=$HTX_THEME" >> /opt/hetianxia/.env
+echo "HTX_LAYOUT=$HTX_LAYOUT" >> /opt/hetianxia/.env
+echo "HTX_HOST_BIND=$HTX_HOST_BIND" >> /opt/hetianxia/.env
+echo "HTX_FRONTEND_PORT=$HTX_FRONTEND_PORT" >> /opt/hetianxia/.env
+echo "HTX_BACKEND_PORT=$HTX_BACKEND_PORT" >> /opt/hetianxia/.env
+echo "HTX_SAM_MODEL_SIZE=$HTX_SAM_MODEL_SIZE" >> /opt/hetianxia/.env
+echo "HTX_SAM_MODELS_DIR=$HTX_SAM_MODELS_DIR" >> /opt/hetianxia/.env
+echo "HTX_DATABASE_URL=sqlite:///./data/hetianxia.db" >> /opt/hetianxia/.env
+echo "HTX_SECRET_KEY=$GENERATED_SECRET_KEY" >> /opt/hetianxia/.env
+echo "HTX_ALGORITHM=HS256" >> /opt/hetianxia/.env
+echo "HTX_ACCESS_TOKEN_EXPIRE_MINUTES=1440" >> /opt/hetianxia/.env
+echo "HTX_UPLOAD_DIR=./data/uploads" >> /opt/hetianxia/.env
+echo "HTX_THUMBNAIL_DIR=./data/thumbnails" >> /opt/hetianxia/.env
 
 # ---------- 5. 拉取/构建 ----------
 echo -e "${YELLOW}[5/7] 构建镜像（需要几分钟）...${NC}"
@@ -78,9 +99,10 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}  部署成功！${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
-echo "  前端: http://$(curl -s ifconfig.me 2>/dev/null || echo 'YOUR_IP')"
-echo "  后端: http://$(curl -s ifconfig.me 2>/dev/null || echo 'YOUR_IP'):8000"
-echo "  API文档: http://$(curl -s ifconfig.me 2>/dev/null || echo 'YOUR_IP'):8000/docs"
+SERVER_IP=$(curl -s ifconfig.me 2>/dev/null || echo 'YOUR_IP')
+echo "  前端: http://${SERVER_IP}:${HTX_FRONTEND_PORT}"
+echo "  后端: http://${SERVER_IP}:${HTX_BACKEND_PORT}"
+echo "  API文档: http://${SERVER_IP}:${HTX_BACKEND_PORT}/docs"
 echo ""
 echo "  管理命令:"
 echo "    cd /opt/hetianxia"

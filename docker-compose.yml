@@ -4,18 +4,23 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "${HTX_HOST_BIND:-0.0.0.0}:${HTX_BACKEND_PORT:-8000}:8000"
     volumes:
       - ./data:/app/data
+      - ./backend/models:/app/models:ro
     env_file:
       - .env
     environment:
-      - APP_NAME=${APP_NAME:-高纳AI}
-      - COMPANY_NAME=${COMPANY_NAME:-高纳科技}
-      - THEME=${THEME:-light}
-      - DATABASE_URL=sqlite:///./data/hetianxia.db
-      - UPLOAD_DIR=./data/uploads
-      - THUMBNAIL_DIR=./data/thumbnails
+      - HTX_APP_NAME=${HTX_APP_NAME:-高纳AI}
+      - HTX_COMPANY_NAME=${HTX_COMPANY_NAME:-高纳科技}
+      - HTX_PLATFORM_NAME=${HTX_PLATFORM_NAME:-工业视觉平台}
+      - HTX_THEME=${HTX_THEME:-light}
+      - HTX_LAYOUT=${HTX_LAYOUT:-sidebar}
+      - HTX_SAM_MODEL_SIZE=${HTX_SAM_MODEL_SIZE:-tiny}
+      - HTX_SAM_MODELS_DIR=${HTX_SAM_MODELS_DIR:-./models}
+      - HTX_DATABASE_URL=sqlite:///./data/hetianxia.db
+      - HTX_UPLOAD_DIR=./data/uploads
+      - HTX_THUMBNAIL_DIR=./data/thumbnails
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     restart: unless-stopped
 
@@ -24,11 +29,19 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_APP_NAME=${APP_NAME:-高纳AI}
-        - VITE_COMPANY_NAME=${COMPANY_NAME:-高纳科技}
-        - VITE_THEME=${THEME:-light}
+        - HTX_APP_NAME=${HTX_APP_NAME:-高纳AI}
+        - HTX_COMPANY_NAME=${HTX_COMPANY_NAME:-高纳科技}
+        - HTX_PLATFORM_NAME=${HTX_PLATFORM_NAME:-工业视觉平台}
+        - HTX_THEME=${HTX_THEME:-light}
+        - HTX_LAYOUT=${HTX_LAYOUT:-sidebar}
+    environment:
+      - HTX_APP_NAME=${HTX_APP_NAME:-高纳AI}
+      - HTX_COMPANY_NAME=${HTX_COMPANY_NAME:-高纳科技}
+      - HTX_PLATFORM_NAME=${HTX_PLATFORM_NAME:-工业视觉平台}
+      - HTX_THEME=${HTX_THEME:-light}
+      - HTX_LAYOUT=${HTX_LAYOUT:-sidebar}
     ports:
-      - "80:80"
+      - "${HTX_HOST_BIND:-0.0.0.0}:${HTX_FRONTEND_PORT:-80}:80"
     depends_on:
       - backend
     restart: unless-stopped

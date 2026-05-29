@@ -10,7 +10,7 @@ from app.routers import audit, deployment, notification, export_router, user_man
 
 init_db()
 
-app = FastAPI(title=f"{settings.APP_NAME} - 工业视觉平台", version="0.1.0")
+app = FastAPI(title=f"{settings.APP_NAME} - {settings.PLATFORM_NAME}", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -55,5 +55,7 @@ def app_config():
     return {
         "app_name": settings.APP_NAME,
         "company_name": settings.COMPANY_NAME,
+        "platform_name": settings.PLATFORM_NAME,
         "theme": settings.THEME,
+        "layout": settings.LAYOUT,
     }

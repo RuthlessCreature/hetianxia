@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { authApi } from '../../api/auth';
+import { APP_NAME, PLATFORM_NAME } from '../../app/appName';
 import type { RegisterData } from '../../types';
 
 export default function RegisterPage() {
@@ -30,8 +31,8 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-2">注册高纳AI</h1>
-        <p className="text-gray-500 text-center mb-6">创建您的AOI视觉AI平台账号</p>
+        <h1 className="text-2xl font-bold text-center mb-2">注册{APP_NAME}</h1>
+        <p className="text-gray-500 text-center mb-6">创建您的{PLATFORM_NAME}账号</p>
         <form onSubmit={handleSubmit}>
           {error && <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">{error}</div>}
           <div className="mb-4">

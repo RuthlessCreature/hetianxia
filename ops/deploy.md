@@ -51,16 +51,32 @@ cd hetianxia
 
 ```bash
 cat > .env << EOF
-APP_NAME=高纳AI
-DATABASE_URL=sqlite:///./data/hetianxia.db
-SECRET_KEY=$(openssl rand -hex 32)
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=1440
-UPLOAD_DIR=./data/uploads
-THUMBNAIL_DIR=./data/thumbnails
+HTX_APP_NAME=高纳AI
+HTX_COMPANY_NAME=高纳科技
+HTX_PLATFORM_NAME=工业视觉平台
+HTX_THEME=light
+HTX_LAYOUT=sidebar
+HTX_HOST_BIND=0.0.0.0
+HTX_FRONTEND_PORT=80
+HTX_BACKEND_PORT=8000
+HTX_SAM_MODEL_SIZE=tiny
+HTX_SAM_MODELS_DIR=./models
+HTX_DATABASE_URL=sqlite:///./data/hetianxia.db
+HTX_SECRET_KEY=$(openssl rand -hex 32)
+HTX_ALGORITHM=HS256
+HTX_ACCESS_TOKEN_EXPIRE_MINUTES=1440
+HTX_UPLOAD_DIR=./data/uploads
+HTX_THUMBNAIL_DIR=./data/thumbnails
 EOF
 
 mkdir -p data/uploads data/thumbnails data/models
+```
+
+下载 AI 模型：
+
+```bash
+sudo apt-get update && sudo apt-get install -y curl ca-certificates
+bash scripts/download-ai-models.sh
 ```
 
 ## 4. 启动
@@ -81,7 +97,7 @@ API文档: http://你的IP:8000/docs
 
 ## 改名字
 
-`.env` 里改 `APP_NAME=你的名字`，重新 `docker compose up -d --build`。
+`.env` 里改 `HTX_APP_NAME=你的名字`，重新 `docker compose up -d`。
 
 ---
 
