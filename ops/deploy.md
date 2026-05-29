@@ -59,6 +59,9 @@ HTX_LAYOUT=sidebar
 HTX_HOST_BIND=0.0.0.0
 HTX_FRONTEND_PORT=80
 HTX_BACKEND_PORT=8000
+HTX_PYTHON_BASE_IMAGE=python:3.12-slim
+HTX_NODE_BASE_IMAGE=node:20-alpine
+HTX_NGINX_BASE_IMAGE=nginx:alpine
 HTX_SAM_MODEL_SIZE=tiny
 HTX_SAM_MODELS_DIR=./models
 HTX_DATABASE_URL=sqlite:///./data/hetianxia.db
@@ -69,7 +72,7 @@ HTX_UPLOAD_DIR=./data/uploads
 HTX_THUMBNAIL_DIR=./data/thumbnails
 EOF
 
-mkdir -p data/uploads data/thumbnails data/models
+mkdir -p data/uploads data/thumbnails backend/models
 ```
 
 下载 AI 模型：
@@ -83,6 +86,12 @@ bash scripts/download-ai-models.sh
 
 ```bash
 bash scripts/up.sh
+```
+
+Docker Hub 超时时可换基础镜像代理：
+
+```bash
+HTX_PYTHON_BASE_IMAGE=m.daocloud.io/docker.io/library/python:3.12-slim HTX_NODE_BASE_IMAGE=m.daocloud.io/docker.io/library/node:20-alpine HTX_NGINX_BASE_IMAGE=m.daocloud.io/docker.io/library/nginx:alpine bash scripts/up.sh
 ```
 
 ## 5. 验证

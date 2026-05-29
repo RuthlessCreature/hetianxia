@@ -1,4 +1,5 @@
-FROM python:3.12-slim
+ARG HTX_PYTHON_BASE_IMAGE=python:3.12-slim
+FROM ${HTX_PYTHON_BASE_IMAGE}
 
 WORKDIR /app
 

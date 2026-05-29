@@ -5,6 +5,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        - HTX_PYTHON_BASE_IMAGE=${HTX_PYTHON_BASE_IMAGE}
     ports:
       - "${HTX_HOST_BIND}:${HTX_BACKEND_PORT}:8000"
     volumes:
@@ -24,6 +26,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
+        - HTX_NODE_BASE_IMAGE=${HTX_NODE_BASE_IMAGE}
+        - HTX_NGINX_BASE_IMAGE=${HTX_NGINX_BASE_IMAGE}
         - HTX_APP_NAME=${HTX_APP_NAME}
         - HTX_COMPANY_NAME=${HTX_COMPANY_NAME}
         - HTX_PLATFORM_NAME=${HTX_PLATFORM_NAME}

@@ -1,5 +1,7 @@
 # Stage 1: Build frontend
-FROM node:20-alpine AS frontend-builder
+ARG HTX_NODE_BASE_IMAGE=node:20-alpine
+ARG HTX_NGINX_BASE_IMAGE=nginx:alpine
+FROM ${HTX_NODE_BASE_IMAGE} AS frontend-builder
 WORKDIR /app
 ARG HTX_APP_NAME=高纳AI
 ARG HTX_COMPANY_NAME=高纳科技
@@ -17,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Nginx serving built frontend
-FROM nginx:alpine
+FROM ${HTX_NGINX_BASE_IMAGE}
 RUN apk add --no-cache gettext
 ENV HTX_APP_NAME=高纳AI
 ENV HTX_COMPANY_NAME=高纳科技

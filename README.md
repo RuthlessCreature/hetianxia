@@ -71,6 +71,15 @@ bash scripts/up.sh
 | `HTX_FRONTEND_PORT` | `80` | 前端宿主机端口 |
 | `HTX_BACKEND_PORT` | `8000` | 后端 API 宿主机端口 |
 
+Docker Hub 访问不稳定时，可以把基础镜像切到可用的镜像代理：
+
+```bash
+HTX_PYTHON_BASE_IMAGE=m.daocloud.io/docker.io/library/python:3.12-slim \
+HTX_NODE_BASE_IMAGE=m.daocloud.io/docker.io/library/node:20-alpine \
+HTX_NGINX_BASE_IMAGE=m.daocloud.io/docker.io/library/nginx:alpine \
+bash scripts/up.sh
+```
+
 ### Ubuntu 一键下载 AI 模型
 
 默认下载 `YOLOv8n` + `SAM2 tiny`，适合轻量服务器先跑通：
