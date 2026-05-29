@@ -1,23 +1,18 @@
+version: "3.7"
+
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "${HTX_HOST_BIND:-0.0.0.0}:${HTX_BACKEND_PORT:-8000}:8000"
+      - "${HTX_HOST_BIND}:${HTX_BACKEND_PORT}:8000"
     volumes:
       - ./data:/app/data
       - ./backend/models:/app/models:ro
     env_file:
       - .env
     environment:
-      - HTX_APP_NAME=${HTX_APP_NAME:-高纳AI}
-      - HTX_COMPANY_NAME=${HTX_COMPANY_NAME:-高纳科技}
-      - HTX_PLATFORM_NAME=${HTX_PLATFORM_NAME:-工业视觉平台}
-      - HTX_THEME=${HTX_THEME:-light}
-      - HTX_LAYOUT=${HTX_LAYOUT:-sidebar}
-      - HTX_SAM_MODEL_SIZE=${HTX_SAM_MODEL_SIZE:-tiny}
-      - HTX_SAM_MODELS_DIR=${HTX_SAM_MODELS_DIR:-./models}
       - HTX_DATABASE_URL=sqlite:///./data/hetianxia.db
       - HTX_UPLOAD_DIR=./data/uploads
       - HTX_THUMBNAIL_DIR=./data/thumbnails
@@ -29,19 +24,15 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - HTX_APP_NAME=${HTX_APP_NAME:-高纳AI}
-        - HTX_COMPANY_NAME=${HTX_COMPANY_NAME:-高纳科技}
-        - HTX_PLATFORM_NAME=${HTX_PLATFORM_NAME:-工业视觉平台}
-        - HTX_THEME=${HTX_THEME:-light}
-        - HTX_LAYOUT=${HTX_LAYOUT:-sidebar}
-    environment:
-      - HTX_APP_NAME=${HTX_APP_NAME:-高纳AI}
-      - HTX_COMPANY_NAME=${HTX_COMPANY_NAME:-高纳科技}
-      - HTX_PLATFORM_NAME=${HTX_PLATFORM_NAME:-工业视觉平台}
-      - HTX_THEME=${HTX_THEME:-light}
-      - HTX_LAYOUT=${HTX_LAYOUT:-sidebar}
+        - HTX_APP_NAME=${HTX_APP_NAME}
+        - HTX_COMPANY_NAME=${HTX_COMPANY_NAME}
+        - HTX_PLATFORM_NAME=${HTX_PLATFORM_NAME}
+        - HTX_THEME=${HTX_THEME}
+        - HTX_LAYOUT=${HTX_LAYOUT}
+    env_file:
+      - .env
     ports:
-      - "${HTX_HOST_BIND:-0.0.0.0}:${HTX_FRONTEND_PORT:-80}:80"
+      - "${HTX_HOST_BIND}:${HTX_FRONTEND_PORT}:80"
     depends_on:
       - backend
     restart: unless-stopped

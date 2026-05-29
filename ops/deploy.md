@@ -82,8 +82,7 @@ bash scripts/download-ai-models.sh
 ## 4. 启动
 
 ```bash
-docker compose up -d --build
-docker compose exec backend python seed.py
+bash scripts/up.sh
 ```
 
 ## 5. 验证
@@ -97,17 +96,17 @@ API文档: http://你的IP:8000/docs
 
 ## 改名字
 
-`.env` 里改 `HTX_APP_NAME=你的名字`，重新 `docker compose up -d`。
+`.env` 里改 `HTX_APP_NAME=你的名字`，重新 `bash scripts/up.sh`。
 
 ---
 
 ## 运维
 
 ```bash
-docker compose ps          # 状态
-docker compose logs -f     # 日志
-docker compose restart     # 重启
-docker compose down        # 停
+docker-compose ps          # 状态
+docker-compose logs -f     # 日志
+docker-compose restart     # 重启
+docker-compose down        # 停
 
 # 备份
 tar -czf backup_$(date +%Y%m%d).tar.gz data/

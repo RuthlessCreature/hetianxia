@@ -155,4 +155,4 @@ echo "Model files:"
 [[ -e "$YOLO_PATH" ]] && ls -lh "$YOLO_PATH"
 [[ -d "$SAM_DIR" ]] && find "$SAM_DIR" -maxdepth 1 -type f -name 'sam2_*.pt' -print0 | xargs -0 -r ls -lh
 echo ""
-echo "Done. For Docker builds, run: docker compose up -d --build"
+echo "Done. For Docker builds, run: bash scripts/up.sh"

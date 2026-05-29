@@ -28,7 +28,7 @@
 ## 配置速查
 
 ```env
-# .env — 分发参数改完 docker compose up -d 即生效
+# .env — 分发参数改完 bash scripts/up.sh 即生效
 HTX_APP_NAME=高纳AI          # 软件名
 HTX_COMPANY_NAME=高纳科技     # 公司名
 HTX_PLATFORM_NAME=工业视觉平台 # 平台名/副标题

@@ -10,6 +10,8 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENV_FILE="$ROOT_DIR/.env"
 
 HTX_APP_NAME="${HTX_APP_NAME:-高纳AI}"
 HTX_COMPANY_NAME="${HTX_COMPANY_NAME:-高纳科技}"
@@ -42,7 +44,8 @@ if ! command -v docker &> /dev/null; then
     echo -e "${YELLOW}[2/7] 安装 Docker...${NC}"
     if [ "$OS" = "ubuntu" ] || [ "$OS" = "debian" ]; then
         sudo apt-get update -y
-        sudo apt-get install -y docker.io docker-compose-v2
+        sudo apt-get install -y docker.io
+        sudo apt-get install -y docker-compose-plugin || sudo apt-get install -y docker-compose
     elif [ "$OS" = "centos" ] || [ "$OS" = "rhel" ] || [ "$OS" = "alinux" ]; then
         sudo yum install -y yum-utils
         sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -55,44 +58,68 @@ else
     echo -e "${GREEN}[2/7] Docker 已安装${NC}"
 fi
 
+if docker compose version &> /dev/null; then
+    COMPOSE_CMD="docker compose"
+elif command -v docker-compose &> /dev/null; then
+    COMPOSE_CMD="docker-compose"
+else
+    echo -e "${YELLOW}未检测到 Docker Compose，尝试安装 legacy docker-compose...${NC}"
+    if [ "$OS" = "ubuntu" ] || [ "$OS" = "debian" ]; then
+        sudo apt-get update -y
+        sudo apt-get install -y docker-compose
+    else
+        echo -e "${RED}请先安装 Docker Compose v2 插件或 legacy docker-compose${NC}"
+        exit 1
+    fi
+    COMPOSE_CMD="docker-compose"
+fi
+echo -e "${GREEN}Compose 命令: $COMPOSE_CMD${NC}"
+
 # ---------- 3. 创建项目目录 ----------
 echo -e "${YELLOW}[3/7] 创建项目目录...${NC}"
-sudo mkdir -p /opt/hetianxia/data/uploads /opt/hetianxia/data/thumbnails
-sudo chmod -R 755 /opt/hetianxia/data
+mkdir -p "$ROOT_DIR/data/uploads" "$ROOT_DIR/data/thumbnails" "$ROOT_DIR/backend/models"
 
-# ---------- 4. 生成 HTX_SECRET_KEY ----------
-echo -e "${YELLOW}[4/7] 生成安全密钥...${NC}"
-GENERATED_SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))" 2>/dev/null || openssl rand -hex 32)
-echo "HTX_APP_NAME=$HTX_APP_NAME" > /opt/hetianxia/.env
-echo "HTX_COMPANY_NAME=$HTX_COMPANY_NAME" >> /opt/hetianxia/.env
-echo "HTX_PLATFORM_NAME=$HTX_PLATFORM_NAME" >> /opt/hetianxia/.env
-echo "HTX_THEME=$HTX_THEME" >> /opt/hetianxia/.env
-echo "HTX_LAYOUT=$HTX_LAYOUT" >> /opt/hetianxia/.env
-echo "HTX_HOST_BIND=$HTX_HOST_BIND" >> /opt/hetianxia/.env
-echo "HTX_FRONTEND_PORT=$HTX_FRONTEND_PORT" >> /opt/hetianxia/.env
-echo "HTX_BACKEND_PORT=$HTX_BACKEND_PORT" >> /opt/hetianxia/.env
-echo "HTX_SAM_MODEL_SIZE=$HTX_SAM_MODEL_SIZE" >> /opt/hetianxia/.env
-echo "HTX_SAM_MODELS_DIR=$HTX_SAM_MODELS_DIR" >> /opt/hetianxia/.env
-echo "HTX_DATABASE_URL=sqlite:///./data/hetianxia.db" >> /opt/hetianxia/.env
-echo "HTX_SECRET_KEY=$GENERATED_SECRET_KEY" >> /opt/hetianxia/.env
-echo "HTX_ALGORITHM=HS256" >> /opt/hetianxia/.env
-echo "HTX_ACCESS_TOKEN_EXPIRE_MINUTES=1440" >> /opt/hetianxia/.env
-echo "HTX_UPLOAD_DIR=./data/uploads" >> /opt/hetianxia/.env
-echo "HTX_THUMBNAIL_DIR=./data/thumbnails" >> /opt/hetianxia/.env
+ensure_env() {
+    local key="$1"
+    local value="$2"
+    if ! grep -q "^${key}=" "$ENV_FILE" 2>/dev/null; then
+        echo "${key}=${value}" >> "$ENV_FILE"
+    fi
+}
+
+# ---------- 4. 生成/补齐 .env ----------
+echo -e "${YELLOW}[4/7] 生成/补齐 .env...${NC}"
+touch "$ENV_FILE"
+ensure_env "HTX_APP_NAME" "$HTX_APP_NAME"
+ensure_env "HTX_COMPANY_NAME" "$HTX_COMPANY_NAME"
+ensure_env "HTX_PLATFORM_NAME" "$HTX_PLATFORM_NAME"
+ensure_env "HTX_THEME" "$HTX_THEME"
+ensure_env "HTX_LAYOUT" "$HTX_LAYOUT"
+ensure_env "HTX_HOST_BIND" "$HTX_HOST_BIND"
+ensure_env "HTX_FRONTEND_PORT" "$HTX_FRONTEND_PORT"
+ensure_env "HTX_BACKEND_PORT" "$HTX_BACKEND_PORT"
+ensure_env "HTX_SAM_MODEL_SIZE" "$HTX_SAM_MODEL_SIZE"
+ensure_env "HTX_SAM_MODELS_DIR" "$HTX_SAM_MODELS_DIR"
+ensure_env "HTX_DATABASE_URL" "sqlite:///./data/hetianxia.db"
+ensure_env "HTX_SECRET_KEY" "$(python3 -c "import secrets; print(secrets.token_hex(32))" 2>/dev/null || openssl rand -hex 32)"
+ensure_env "HTX_ALGORITHM" "HS256"
+ensure_env "HTX_ACCESS_TOKEN_EXPIRE_MINUTES" "1440"
+ensure_env "HTX_UPLOAD_DIR" "./data/uploads"
+ensure_env "HTX_THUMBNAIL_DIR" "./data/thumbnails"
 
 # ---------- 5. 拉取/构建 ----------
 echo -e "${YELLOW}[5/7] 构建镜像（需要几分钟）...${NC}"
-cd /opt/hetianxia
-sudo docker compose build
+cd "$ROOT_DIR"
+sudo $COMPOSE_CMD build
 
 # ---------- 6. 启动服务 ----------
 echo -e "${YELLOW}[6/7] 启动服务...${NC}"
-sudo docker compose up -d
+sudo $COMPOSE_CMD up -d
 
 # ---------- 7. 初始化数据库 ----------
 echo -e "${YELLOW}[7/7] 初始化数据库...${NC}"
 sleep 3
-sudo docker compose exec -T backend python seed.py 2>/dev/null || echo "seed跳过（已初始化）"
+sudo $COMPOSE_CMD exec -T backend python seed.py 2>/dev/null || echo "seed跳过（已初始化）"
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
@@ -105,10 +132,10 @@ echo "  后端: http://${SERVER_IP}:${HTX_BACKEND_PORT}"
 echo "  API文档: http://${SERVER_IP}:${HTX_BACKEND_PORT}/docs"
 echo ""
 echo "  管理命令:"
-echo "    cd /opt/hetianxia"
-echo "    sudo docker compose ps          # 查看状态"
-echo "    sudo docker compose logs -f     # 查看日志"
-echo "    sudo docker compose restart     # 重启"
-echo "    sudo docker compose down        # 停止"
-echo "    sudo docker compose up -d       # 启动"
+echo "    cd $ROOT_DIR"
+echo "    sudo $COMPOSE_CMD ps          # 查看状态"
+echo "    sudo $COMPOSE_CMD logs -f     # 查看日志"
+echo "    sudo $COMPOSE_CMD restart     # 重启"
+echo "    sudo $COMPOSE_CMD down        # 停止"
+echo "    sudo $COMPOSE_CMD up -d       # 启动"
 echo ""

@@ -37,7 +37,7 @@ npm run dev
 ### Docker 一键启动
 
 ```bash
-docker compose up -d
+bash scripts/up.sh
 ```
 
 ### 多分发启动参数
@@ -53,7 +53,7 @@ HTX_LAYOUT=focus \
 HTX_HOST_BIND=0.0.0.0 \
 HTX_FRONTEND_PORT=8080 \
 HTX_BACKEND_PORT=18000 \
-docker compose up -d
+bash scripts/up.sh
 ```
 
 可选值：
